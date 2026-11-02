@@ -387,9 +387,9 @@ public class FloatingModMenuService extends Service {
         };
     }
 
-    @Override public int onStartCommand(Intent intent, int flags, int startId) { return START_NOT_STICKY; }
+    @Override public int onStartCommand(Intent intent, int flags, int startId) { return START_STICKY; }
     @Override public IBinder onBind(Intent intent) { return null; }
-    @Override public void onTaskRemoved(Intent intent) { super.onTaskRemoved(intent); stopSelf(); }
+    @Override public void onTaskRemoved(Intent intent) { super.onTaskRemoved(intent); }
     @Override public void onDestroy() {
         destroyed = true;
         handler.removeCallbacksAndMessages(null);

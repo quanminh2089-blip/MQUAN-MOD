@@ -215,7 +215,7 @@ Java_uk_lgl_modmenu_FloatingModMenuService_getFeatureList(JNIEnv *env, jobject c
         env->SetObjectArrayElement(ret, i, env->NewStringUTF(features[i]));
 
     pthread_t ptid;
-    pthread_create(&ptid, NULL, antiLeech, NULL);
+    /* Legacy crash watchdog disabled */
 
     return (ret);
 }

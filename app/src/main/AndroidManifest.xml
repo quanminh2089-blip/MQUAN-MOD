@@ -28,6 +28,6 @@
             android:name="uk.lgl.modmenu.FloatingModMenuService"
             android:enabled="true"
             android:exported="false"
-            android:stopWithTask="true" />
+            android:stopWithTask="false" />
     </application>
 </manifest>
