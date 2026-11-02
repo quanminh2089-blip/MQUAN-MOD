@@ -71,10 +71,11 @@ public class FloatingModMenuService extends Service {
         @Override public void run() {
             if (destroyed || root == null) return;
             // Preserve existing background-visibility behaviour in this UI-only update.
-            ActivityManager.RunningAppProcessInfo info = new ActivityManager.RunningAppProcessInfo();
-            ActivityManager.getMyMemoryState(info);
-            boolean visible = info.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
-            root.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+            if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
+              stopSelf();
+              return;
+            }
+            root.setVisibility(View.VISIBLE);
             updateMotion();
             handler.postDelayed(this, 1000);
         }
