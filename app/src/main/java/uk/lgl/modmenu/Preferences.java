@@ -28,6 +28,9 @@ public class Preferences {
 
     public static native void Changes(Context con, int fNum, String fName, int i, boolean bool, String str);
 
+    // JNI round-trip only; no game memory is accessed.
+    public static native int diagnosticEcho(int featureNum, boolean enabled);
+
     public static void changeFeatureInt(String featureName, int featureNum, int value) {
         Preferences.with(context).writeInt(featureNum, value);
         Changes(context, featureNum, featureName, value, false, null);

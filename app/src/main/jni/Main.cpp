@@ -220,6 +220,13 @@ Java_uk_lgl_modmenu_FloatingModMenuService_getFeatureList(JNIEnv *env, jobject c
     return (ret);
 }
 
+// Encodes feature id and toggle state to verify Java -> native -> Java.
+// This diagnostic does not modify game memory or access other processes.
+JNIEXPORT jint JNICALL
+Java_uk_lgl_modmenu_Preferences_diagnosticEcho(JNIEnv *, jclass, jint featureNum, jboolean enabled) {
+    return (featureNum << 1) | (enabled == JNI_TRUE ? 1 : 0);
+}
+
 JNIEXPORT void JNICALL
 Java_uk_lgl_modmenu_Preferences_Changes(JNIEnv *env, jclass clazz, jobject obj,
                                         jint featNum, jstring featName, jint value,

@@ -155,6 +155,21 @@ public class FloatingModMenuService extends Service {
         header.setOnTouchListener(dragListener(false));
         title.setOnTouchListener(dragListener(false));
         panel.addView(header);
+        // Native bridge diagnostics, not a claim of connection to the game.
+        TextView bridgeStatus = new TextView(this);
+        bridgeStatus.setTextSize(11);
+        bridgeStatus.setTextColor(Color.rgb(145, 87, 36));
+        bridgeStatus.setPadding(dp(7), 0, dp(7), dp(6));
+        try {
+            int echo = Preferences.diagnosticEcho(3, true);
+            bridgeStatus.setText(echo == 7
+                    ? "JNI: OK  |  Game: Chưa kết nối"
+                    : "JNI: Phản hồi sai  |  Game: Chưa kết nối");
+        } catch (Throwable e) {
+            bridgeStatus.setText("JNI: Lỗi  |  Game: Chưa kết nối");
+            android.util.Log.e(TAG, "JNI diagnostic failed", e);
+        }
+        panel.addView(bridgeStatus);
 
         ScrollView scroll = new ScrollView(this);
         scroll.setFillViewport(false);
@@ -245,7 +260,24 @@ public class FloatingModMenuService extends Service {
         row.addView(toggle, new LinearLayout.LayoutParams(dp(48), dp(48)));
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override public void onCheckedChanged(CompoundButton button, boolean checked) {
-                Preferences.changeFeatureBool(name, id, checked);
+                // Verify JNI round trip. Do not pretend the game was patched.
+                try {
+                    int actual = Preferences.diagnosticEcho(id, checked);
+                    int expected = (id << 1) | (checked ? 1 : 0);
+                    if (actual != expected) {
+                        Toast.makeText(FloatingModMenuService.this,
+                                "Lỗi phản hồi JNI: " + name, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    android.util.Log.i(TAG, "JNI OK feature=" + id + " enabled=" + checked);
+                    Toast.makeText(FloatingModMenuService.this,
+                            "JNI OK • Game chưa kết nối", Toast.LENGTH_SHORT).show();
+                } catch (Throwable e) {
+                    android.util.Log.e(TAG, "JNI toggle failed: " + id, e);
+                    Toast.makeText(FloatingModMenuService.this,
+                            "Lỗi kết nối JNI", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 menuStates.put(id, checked);
                 row.setBackground(surface(checked ? Color.rgb(237, 248, 244) : Color.rgb(246, 248, 248),
                         15, checked ? Color.rgb(211, 235, 226) : Color.rgb(238, 241, 240)));
