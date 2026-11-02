@@ -116,19 +116,19 @@ public class FloatingModMenuService extends Service {
     private void buildMenu() {
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         root = new FrameLayout(this);
-        root.setPadding(dp(10), dp(10), dp(10), dp(10));
-        int menuWidth = Math.min(dp(318), getResources().getDisplayMetrics().widthPixels - dp(24));
+        root.setPadding(dp(5), dp(5), dp(5), dp(5));
+        int menuWidth = Math.min(dp(260), getResources().getDisplayMetrics().widthPixels - dp(24));
         panel = new LinearLayout(this);
         panel.setOrientation(LinearLayout.VERTICAL);
-        panel.setPadding(dp(13), 0, dp(13), dp(8));
+        panel.setPadding(dp(9), 0, dp(9), dp(6));
         panel.setBackground(surface(Color.WHITE, 26, Color.rgb(229, 235, 234)));
         panel.setElevation(dp(10));
         root.addView(panel, new FrameLayout.LayoutParams(menuWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         LinearLayout header = new LinearLayout(this);
         header.setGravity(Gravity.CENTER_VERTICAL);
-        header.setPadding(dp(7), dp(20), dp(7), dp(20));
-        logo = image(R.drawable.mq_logo, 58);
+        header.setPadding(dp(5), dp(8), dp(5), dp(8));
+        logo = image(R.drawable.mq_logo, 38);
         logo.setPadding(dp(2), dp(2), dp(2), dp(2));
         logo.setBackground(surface(Color.rgb(243, 250, 247), 19, Color.rgb(226, 238, 234)));
         logo.setElevation(dp(2));
@@ -143,12 +143,12 @@ public class FloatingModMenuService extends Service {
         header.addView(logo);
         title = new TextView(this);
         title.setText("MinhQuan Mod");
-        title.setTextSize(20);
+        title.setTextSize(16);
         title.setSingleLine(true);
         title.setTextColor(INK);
         title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         title.setLetterSpacing(-0.025f);
-        LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(0, dp(58), 1f);
+        LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(0, dp(40), 1f);
         titleParams.leftMargin = dp(12);
         title.setGravity(Gravity.CENTER_VERTICAL);
         header.addView(title, titleParams);
@@ -169,17 +169,17 @@ public class FloatingModMenuService extends Service {
         scroll.addView(rows);
         int available = getResources().getDisplayMetrics().heightPixels - dp(210);
         panel.addView(scroll, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                Math.min(dp(280), Math.max(dp(90), available))));
+                Math.min(dp(180), Math.max(dp(90), available))));
 
         View divider = new View(this);
         divider.setBackgroundColor(Color.rgb(233, 238, 238));
         LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(1));
-        dividerParams.topMargin = dp(13);
+        dividerParams.topMargin = dp(5);
         panel.addView(divider, dividerParams);
         LinearLayout footer = new LinearLayout(this);
         footer.setGravity(Gravity.CENTER_VERTICAL);
-        footer.addView(action("Ẩn", true), new LinearLayout.LayoutParams(0, dp(48), 1f));
-        footer.addView(action("Thu gọn", false), new LinearLayout.LayoutParams(0, dp(48), 1f));
+        footer.addView(action("Ẩn", true), new LinearLayout.LayoutParams(0, dp(36), 1f));
+        footer.addView(action("Thu gọn", false), new LinearLayout.LayoutParams(0, dp(36), 1f));
         panel.addView(footer);
 
         bubble = new ImageView(this);
@@ -193,7 +193,7 @@ public class FloatingModMenuService extends Service {
         bubble.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) { expand(); }
         });
-        root.addView(bubble, new FrameLayout.LayoutParams(dp(66), dp(66)));
+        root.addView(bubble, new FrameLayout.LayoutParams(dp(48), dp(48)));
 
         params = new WindowManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -212,12 +212,12 @@ public class FloatingModMenuService extends Service {
     private View feature(final int id, final String name, int iconResource) {
         final LinearLayout row = new LinearLayout(this);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(dp(12), dp(7), dp(12), dp(7));
+        row.setPadding(dp(8), dp(4), dp(8), dp(4));
         row.setBackground(surface(Color.rgb(246, 248, 248), 15, Color.rgb(238, 241, 240)));
-        LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(62));
-        rowParams.bottomMargin = dp(8);
+        LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(48));
+        rowParams.bottomMargin = dp(5);
         row.setLayoutParams(rowParams);
-        final ImageView icon = image(iconResource, 34);
+        final ImageView icon = image(iconResource, 28);
         icon.setPadding(dp(7), dp(7), dp(7), dp(7));
         icon.setBackground(surface(Color.WHITE, 11, 0));
         icon.setElevation(dp(1));
@@ -225,7 +225,7 @@ public class FloatingModMenuService extends Service {
         TextView label = new TextView(this);
         label.setText(name);
         label.setTextColor(INK);
-        label.setTextSize(13);
+        label.setTextSize(12);
         label.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
         labelParams.leftMargin = dp(10);
