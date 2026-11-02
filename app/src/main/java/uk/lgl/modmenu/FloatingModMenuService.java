@@ -198,7 +198,6 @@ public class FloatingModMenuService extends Service {
                 "</html>", "text/html", "utf-8");
         wView.setBackgroundColor(0x00000000); //Transparent
         wView.setAlpha(ICON_ALPHA);
-        wView.getSettings().setAppCacheEnabled(true);
         wView.setOnTouchListener(onTouchListener());
 
         //********** Settings icon **********
@@ -978,7 +977,6 @@ public class FloatingModMenuService extends Service {
         wView.loadData(text, "text/html", "utf-8");
         wView.setBackgroundColor(0x00000000); //Transparent
         wView.setPadding(0, 5, 0, 5);
-        wView.getSettings().setAppCacheEnabled(false);
         return wView;
     }
 
