@@ -71,7 +71,7 @@ public class FloatingModMenuService extends Service {
         @Override public void run() {
             if (destroyed || root == null) return;
             // Preserve existing background-visibility behaviour in this UI-only update.
-            if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
+            if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(FloatingModMenuService.this)) {
               stopSelf();
               return;
             }
