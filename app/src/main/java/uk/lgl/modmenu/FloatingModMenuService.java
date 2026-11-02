@@ -55,6 +55,36 @@ public class FloatingModMenuService extends Service {
     private boolean destroyed;
     private boolean closing;
 
+    // MQUAN_DIAGNOSTIC_V2: diagnostics for this app only, not a game connection.
+    private TextView featureStatus;
+    private static final String GAME_DISCONNECTED = "Game: Chưa kết nối";
+
+    private void reportFeatureDiagnostic(int id, String name, boolean requested) {
+        final int expected = (id << 1) | (requested ? 1 : 0);
+        try {
+            final int received = Preferences.diagnosticEcho(id, requested);
+            if (received != expected) {
+                String message = "JNI phản hồi sai • " + name;
+                if (featureStatus != null) featureStatus.setText(message);
+                android.util.Log.e(TAG, "FEATURE_DIAG bad echo id=" + id
+                        + " expected=" + expected + " received=" + received);
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String message = name + ": Đã nhận lệnh • Chưa thể thực thi";
+            if (featureStatus != null) featureStatus.setText(message);
+            android.util.Log.i(TAG, "FEATURE_DIAG id=" + id + " requested=" + requested
+                    + " jni=OK game=DISCONNECTED applied=false");
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        } catch (Throwable error) {
+            String message = "JNI lỗi • " + name;
+            if (featureStatus != null) featureStatus.setText(message);
+            android.util.Log.e(TAG, "FEATURE_DIAG failed id=" + id, error);
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     // Keep the native interface compatible. UI construction does not call the
     // legacy native feature list, which contained an advert and startup toast.
     native void setTitleText(TextView view);
@@ -170,6 +200,13 @@ public class FloatingModMenuService extends Service {
             android.util.Log.e(TAG, "JNI diagnostic failed", e);
         }
         panel.addView(bridgeStatus);
+        featureStatus = new TextView(this);
+        featureStatus.setText("Tính năng: Chưa thực thi • " + GAME_DISCONNECTED);
+        featureStatus.setTextSize(10);
+        featureStatus.setTextColor(Color.rgb(113, 103, 94));
+        featureStatus.setPadding(dp(7), 0, dp(7), dp(5));
+        featureStatus.setMaxLines(2);
+        panel.addView(featureStatus);
 
         ScrollView scroll = new ScrollView(this);
         scroll.setFillViewport(false);
@@ -260,24 +297,8 @@ public class FloatingModMenuService extends Service {
         row.addView(toggle, new LinearLayout.LayoutParams(dp(48), dp(48)));
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override public void onCheckedChanged(CompoundButton button, boolean checked) {
-                // Verify JNI round trip. Do not pretend the game was patched.
-                try {
-                    int actual = Preferences.diagnosticEcho(id, checked);
-                    int expected = (id << 1) | (checked ? 1 : 0);
-                    if (actual != expected) {
-                        Toast.makeText(FloatingModMenuService.this,
-                                "Lỗi phản hồi JNI: " + name, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    android.util.Log.i(TAG, "JNI OK feature=" + id + " enabled=" + checked);
-                    Toast.makeText(FloatingModMenuService.this,
-                            "JNI OK • Game chưa kết nối", Toast.LENGTH_SHORT).show();
-                } catch (Throwable e) {
-                    android.util.Log.e(TAG, "JNI toggle failed: " + id, e);
-                    Toast.makeText(FloatingModMenuService.this,
-                            "Lỗi kết nối JNI", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                // Diagnostic only: do not call MemoryPatch against another app.
+                reportFeatureDiagnostic(id, name, checked);
                 menuStates.put(id, checked);
                 row.setBackground(surface(checked ? Color.rgb(237, 248, 244) : Color.rgb(246, 248, 248),
                         15, checked ? Color.rgb(211, 235, 226) : Color.rgb(238, 241, 240)));
